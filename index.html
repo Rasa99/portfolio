@@ -210,6 +210,79 @@
     @media (prefers-reduced-motion: reduce){
       .js .reveal{opacity:1;transform:none;transition:none}
     }
+
+    /* ---- Mobile layout ---- */
+    @media (max-width: 900px){
+      /* The hero is the whole problem: minmax(280px,.85fr) on the figure starves
+         the text column. Stack instead, headline first. */
+      .hero{
+        grid-template-columns:1fr;
+        gap:calc(1.1*var(--leading));
+        padding:calc(1.9*var(--leading)) 0 calc(1.7*var(--leading));
+      }
+      .hero-figure{aspect-ratio:16/10}
+      .hero .sub{margin-top:var(--leading)}
+    }
+
+    /* The design file sets style="display:flex" INLINE on .navlinks, which beats
+       its own `@media (max-width:560px){ .nav .navlinks{display:none} }` rule —
+       so the links never hid on a phone and pushed the Contact button ~70px off
+       screen. !important is the honest fix; the inline style comes from the
+       source file and shouldn't be rewritten here. Hidden below 700px because
+       five links crowd the bar well before 560. */
+    @media (max-width: 700px){
+      .nav .navlinks{display:none !important}
+      .nav{gap:var(--space-3)}
+    }
+
+    /* Four stats need ~160px each to stay readable; below this they don't get
+       it (iPad portrait is exactly 768), so go 2x2 before they cramp. */
+    @media (max-width: 800px){
+      .stats{padding:calc(1.6*var(--leading)) 0}
+      .stats .grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        justify-content:stretch;
+        gap:calc(1.2*var(--leading)) var(--space-4);
+      }
+      .stat-label{max-width:none}
+    }
+
+    @media (max-width: 760px){
+      .work-card{
+        grid-template-columns:1fr;
+        gap:calc(0.9*var(--leading));
+        padding:calc(1.4*var(--leading)) 0;
+      }
+      /* keep image-above-text order even on the alternating cards */
+      .work-card.reverse .work-media{order:0}
+      .work-card .work-copy,
+      .work-card .work-body{max-width:none}
+      .work-media{aspect-ratio:16/10}
+      .work-media.sheet{aspect-ratio:16/9}
+
+      /* desktop top padding leaves a screenful of dead space on a phone */
+      .section{padding:calc(1.9*var(--leading)) 0 calc(0.8*var(--leading))}
+      .section-head{margin-bottom:calc(1.1*var(--leading))}
+      .section-title{font-size:25px}
+      .about{padding:calc(1.6*var(--leading)) 0 calc(0.5*var(--leading))}
+      .quote{padding:calc(1.4*var(--leading)) 0 calc(1.6*var(--leading))}
+      .close{padding:calc(1.4*var(--leading)) 0 calc(1.4*var(--leading))}
+    }
+
+    @media (max-width: 430px){
+      .display{font-size:clamp(30px,8.6vw,38px)}
+      .hero .sub{font-size:15.5px}
+      .stat-num{font-size:26px}
+      .stat-label{font-size:12px}
+      .work-title{font-size:21px}
+      .gal-item.wide{grid-column:auto}
+    }
+
+    /* Phones report a coarse pointer — make tap targets reachable. */
+    @media (pointer: coarse){
+      .nav a, .btn{min-height:40px; display:inline-flex; align-items:center}
+      .contact-list a{padding:3px 0}
+    }
   </style>
 
 </head>

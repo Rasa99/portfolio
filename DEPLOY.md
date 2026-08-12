@@ -18,9 +18,18 @@ Vercel's **https://vercel.com/new** page accepts a plain file upload ("drag and 
 python "../Relocation Job Search/build_portfolio.py"
 ```
 
-2. Go to https://vercel.com/rasasalih and drop the **contents** of this folder onto a new deployment — or open https://vercel.com/new and choose the files.
+2. Open https://vercel.com/new, choose the files, name the project, Deploy.
 
 Select the files themselves, not the folder, and leave out `DEPLOY.md` and `.gitignore`; they aren't part of the site.
+
+**⚠ The upload flow only creates NEW projects — it cannot update an existing one.** Deploying again with the name `rasasalih` fails with *"Project already exists"*, and there is no upload option inside a project's dashboard. Updating the live site therefore takes this dance:
+
+1. Deploy the new files under a temporary name (e.g. `rasasalih-tmp`), and check it works at its own URL first.
+2. Old project → Settings → Domains → **Edit** on `rasasalih.vercel.app` → **Remove**. (Renaming the project does *not* release this domain, and editing it just adds a second one — it has to be removed.)
+3. New project → Settings → Domains → **Add Existing** → `rasasalih.vercel.app`.
+4. Confirm https://rasasalih.vercel.app serves the new build, then delete the old project.
+
+**Connecting GitHub (below) removes all of this** — `git push` would just republish. Worth 10 minutes next time you're at a keyboard.
 
 ## Optional: connect GitHub for automatic deploys
 
@@ -51,6 +60,20 @@ Then Vercel → project `rasasalih` → Settings → Git → Connect. You'll nee
 - **A nested asset path** survives the flat build (would 404 on upload).
 - **Two images share a filename** once flattened (one would silently overwrite the other).
 
+## Mobile
+
+The design file was authored desktop-first and shipped with **no breakpoints for the hero, the stats bar or the work cards**. On a phone the hero's image column held a hard 280px floor, which starved the text column down to ~31px and wrapped the headline to about one word per line. `build_portfolio.py` now injects a `MOBILE_CSS` block that:
+
+- stacks the hero below 900px (the actual bug),
+- drops the stats bar to 2×2 below 800px (iPad portrait is exactly 768px),
+- makes work cards single-column below 760px and normalises the alternating image order,
+- trims desktop section padding, which otherwise wastes a screenful on a phone,
+- hides the nav links below 700px with `!important` — **the design file sets `display:flex` inline on `.navlinks`, which beat its own `display:none` media rule and pushed the Contact button ~70px off screen.**
+
+Since this lives in the build script, re-running it after a design change reapplies everything.
+
 ## Verified live
 
-13 images loading, no broken links · design-system CSS applied · all 25 scroll-reveal sections showing · `og-image.jpg` 1200×630 · `robots.txt`, `sitemap.xml`, `styles.css` all 200 · no Fusion 360 anywhere · no horizontal scroll on mobile.
+13 images loading, no broken links · design-system CSS applied · all 25 scroll-reveal sections showing · `og-image.jpg` 1200×630 · `robots.txt`, `sitemap.xml`, `styles.css` all 200 · no Fusion 360 anywhere · **no horizontal overflow at 390px, 414px, 768px or desktop; headline renders on one line per phrase.**
+
+*Measure overflow with `document.documentElement.clientWidth`, not `window.innerWidth` — innerWidth includes the scrollbar and reported "no overflow" while the Contact button was in fact 71px off screen.*
