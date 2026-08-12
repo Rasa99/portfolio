@@ -4,7 +4,40 @@
 
 Deployed 2026-08-11 to your Vercel account (`rasa99`, team `ras-ben`) as the project **`rasasalih`**, by direct file upload — no GitHub involved.
 
-## How it got there, and how to update it
+## Updating it — the short version
+
+**GitHub is connected. Publishing is now one command.**
+
+```bash
+git add -A && git commit -m "update" && git push
+```
+
+That's it. Vercel rebuilds and republishes automatically — verified working (commit `b10a853` auto-deployed to production on push).
+
+Full loop after a design change:
+
+```bash
+python "../Relocation Job Search/build_portfolio.py"
+git add -A && git commit -m "update" && git push
+```
+
+**Setup that's already done, so you never repeat it:**
+- Repo: **https://github.com/Rasa99/portfolio** (public)
+- Auth: an **SSH key** on this machine (`~/.ssh/id_ed25519`), public half registered on your GitHub account as *"Work PC - portfolio deploys"*. No password or token is stored anywhere. Revoke anytime at https://github.com/settings/keys.
+- Vercel's GitHub app is installed and **scoped to the `portfolio` repo only** — not all your repositories.
+- Vercel project `rasasalih` is linked to `Rasa99/portfolio`, branch `main`.
+
+On a **new machine**, generate a fresh key and add it the same way — never copy the private key between machines:
+
+```bash
+ssh-keygen -t ed25519 -C "rasasalih99@gmail.com" -f ~/.ssh/id_ed25519 -N ""
+```
+
+Then paste `~/.ssh/id_ed25519.pub` into https://github.com/settings/ssh/new.
+
+---
+
+## The old manual route (no longer needed)
 
 Vercel's **https://vercel.com/new** page accepts a plain file upload ("drag and drop your project, or choose a file or a folder"). That's the whole deployment path. No CLI, no Node, no GitHub repo, no OAuth.
 
